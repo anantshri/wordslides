@@ -1,4 +1,6 @@
 *.log
+.DS_Store
+.svn
 .htaccess
 sitemap.xml
 sitemap.xml.gz
