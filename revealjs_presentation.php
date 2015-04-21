@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Reveal.js Presentations
+ * Plugin Name: WordSlides
  * Plugin URI: http://anantshri.info/reveal.js/presentation
- * Description: Wordpress based reveal.js presentation development platform
+ * Description: Wordpress based Slides / Presentation maker using markdown forma
  * Version: 0.1
  * Author: Anant Shrivastava
  * Author URI: http://anantshri.info
@@ -144,25 +144,24 @@ function my_temp_inc($original_template)
 	if (is_feed())
 	{
 		return $original_template;
-	}
-	if (get_post_type( $post ) == "presentation" && !is_feed() && is_archive())
-	{
-		return plugin_dir_path( __FILE__ ) . 'presentations-template.php';
-	}
-	if (get_post_type( $post ) == "presentation" && !is_feed() && is_category() )
-	{
-		return plugin_dir_path( __FILE__ ) . 'presentations-template.php';
-	}
-	if (is_page('presentation') && !is_feed())
-	{
-		return plugin_dir_path( __FILE__ ) . '/presentations-template.php';
-	}
-	if (is_page('presentations') && !is_feed())
-	{
-		return plugin_dir_path( __FILE__ ) . '/presentations-template.php';
-	}
-	if (get_post_type( $post ) == "presentation" && !is_feed())
-	{
+	} 
+  if (get_post_type( $post ) == "presentation" && !is_feed() && is_archive())
+  {
+    return plugin_dir_path( __FILE__ ) . 'presentations-template.php';
+  }
+  if (get_post_type( $post ) == "presentation" && !is_feed() && is_category() )
+  {
+    return plugin_dir_path( __FILE__ ) . 'presentations-template.php';
+  }
+  if (is_page('presentation') && !is_feed())
+  {
+    return plugin_dir_path( __FILE__ ) . '/presentations-template.php';
+  }
+  if (is_page('presentations') && !is_feed())
+  {
+    return plugin_dir_path( __FILE__ ) . '/presentations-template.php';
+  }
+  if (get_post_type( $post ) == "presentation" && !is_feed()){
 		return plugin_dir_path( __FILE__ ) . 'single-presentation.php';
 	}
 	return $original_template;	
@@ -193,13 +192,13 @@ function add_custom_types_to_tax( $query ) {
 }
 add_filter( 'pre_get_posts', 'add_custom_types_to_tax' );
 
-//Adding Default content for all disclosures
+//Adding Default content for all presentations
 
-add_filter( 'default_content', 'my_editor_content' );
+add_filter( 'default_content', 'my_editor_content', 10, 2 );
 
-function my_editor_content( $content ) {
-    if ( $post_type_name == get_post_type() ) {
-        $content = "
+function my_editor_content( $original_content,$post ) {
+  if ( "presentation" == $post->post_type ) {
+    $content="
 # Title slide
 
 ---
@@ -215,13 +214,17 @@ function my_editor_content( $content ) {
 # End slide
 
 ";
-        return $content;
-    } 
-	return $content;
+    return $content;
+  }
+  else
+  {
+    return $original_content;
+  }
+  
 };
 // This will disable richtext for presentation type
 add_filter('user_can_richedit', 'disable_wysiwyg_for_CPT');
-function disable_wyswyg_for_CPT($default) {
+function disable_wysiwyg_for_CPT($default) {
   global $post;
   if ('presentation' == get_post_type($post))
     return false;
